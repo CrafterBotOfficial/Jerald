@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    
+    <GamePath>D:\Games\Oculus\Software\another-axiom-gorilla-tag\</GamePath>
+    <ManagedAssembliesPath>$(GamePath)/Gorilla Tag_Data\Managed</ManagedAssembliesPath>
+    <BepInEx_Path>$(GamePath)/BepInEx/</BepInEx_Path>
+    <PluginsPath>$(BepInEx_Path)/plugins/</PluginsPath>
+  </PropertyGroup>
+
+  <!-- Output -->
+  <Target AfterTargets="Build" Name="Output">
+    <Copy SourceFiles="$(TargetPath);bin/Debug/$(TargetFramework)/Jerald.pdb" DestinationFiles="$(GamePath)/BepInEx/plugins/Jerald/Jerald.dll;$(GamePath)/BepInEx/plugins/Jerald/Jerald.pdb" />
+  </Target>
+
+  <!-- Dependencies -->
+  <ItemGroup>
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" />
+
+    <Reference Include="0Harmony">
+      <HintPath>$(GamePath)\BepInEx\core\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(GamePath)\Gorilla Tag_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>$(GamePath)\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>D:\Games\Oculus\Software\another-axiom-gorilla-tag\BepInEx\core\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.Utils">
+      <HintPath>D:\Games\Oculus\Software\another-axiom-gorilla-tag\BepInEx\core\MonoMod.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(GamePath)\Gorilla Tag_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(GamePath)\Gorilla Tag_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
