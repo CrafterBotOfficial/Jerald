@@ -6,17 +6,20 @@ namespace Jerald
 {
     internal static class PageManager
     {
-        public static List<Page> Pages = [new Testing.ExamplePage(), new Testing.TestPage()];
+        public static List<Page> Pages = [];
 
         public static void InjectPagesToEnum()
         {
             var enumBuilder = new EnumBuilder<GorillaComputer.ComputerState>();
+            var instance = GorillaComputer.instance;
 
             int count = 0;
             foreach (var page in Pages)
             {
-                enumBuilder.TryAddEnum(page.GetPageName(), typeof(PageManager).Assembly, out GorillaComputer.ComputerState value);
-                GorillaComputer.instance.OrderList.Add(new GorillaComputer.StateOrderItem(value));
+                enumBuilder.TryAddEnum(page.PageTitle, typeof(PageManager).Assembly, out GorillaComputer.ComputerState newEnum);
+                
+                instance.OrderList.Add(new GorillaComputer.StateOrderItem(newEnum));
+                instance.stateStack.Push(newEnum);
                 count++;
             }
         }

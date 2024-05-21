@@ -17,8 +17,9 @@ namespace Jerald.Patches
         [HarmonyPostfix]
         private static void Start_Postfix(GorillaComputer __instance)
         {
+            __instance.currentStateIndex = 0;
             __instance.FunctionsCount += PageManager.Pages.Count;
-            __instance.FunctionNames.AddRange(PageManager.Pages.Select(page => page.GetPageName()));
+            __instance.FunctionNames.AddRange(PageManager.Pages.Select(page => page.PageTitle));
             foreach (var text in GameObject.FindObjectsOfType<Text>())
             {
                 if (text.gameObject.name.Contains("FunctionSelect"))
@@ -49,7 +50,7 @@ namespace Jerald.Patches
                 stringBuilder.AppendLine("...");
             __instance.functionSelectText.Text = stringBuilder.ToString();
 
-            Main.Logger.LogDebug($"Page:{currentPage} | max page:{maxPages} | indicatorIndex:{indicatorIndex}");
+            // Main.Logger.LogDebug($"Page:{currentPage} | max page:{maxPages} | indicatorIndex:{indicatorIndex}");
             return false;
         }
 
@@ -62,25 +63,29 @@ namespace Jerald.Patches
         private static IEnumerable<CodeInstruction> UpdateScreen_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator iLGenerator)
         {
             var codes = instructions.ToList();
-            var switchStatementJumps = codes.Find(code => code.opcode == OpCodes.Switch).operand as IEnumerable<Label> ?? throw new System.Exception("Failed to find switch operator or parse its operand.");
-            var endSwitchJump = codes[codes.FindIndex(code => code.opcode == OpCodes.Call && code.operand == AccessTools.Method(typeof(GorillaComputer), "UpdateGameModeText")) - 1];
+
+            var switchStatement = codes.Find(code => code.opcode == OpCodes.Switch);
+            var switchJumps = (switchStatement.operand as IEnumerable<Label>).ToList() ?? throw new System.Exception("Failed to find switch operator or parse its operand.");
+            var endSwitchJump = codes[codes.FindIndex(code => code.opcode == OpCodes.Call && code.operand == AccessTools.Method(typeof(GorillaComputer), "UpdateGameModeText")) - 1]; // codes.Skip(codes.IndexOf(switchStatement)).First(code => code.opcode == OpCodes.Br_S).operand; // codes.Single(code => code.labels.Contains(switchStatementJumps.Last())); 
 
             foreach (var page in PageManager.Pages)
             {
-                Main.Logger.LogDebug("Adding MSIL instruction for " + page.GetPageName());
+                Main.Logger.LogDebug("Adding MSIL instruction for " + page.PageTitle);
 
                 // Inject switch block
                 var blockStart = new CodeInstruction(OpCodes.Ldarg_0);
                 blockStart.labels = [iLGenerator.DefineLabel()];
+
                 codes.InsertRange(GetSwitchAppendPoint(codes), [
                     blockStart,
-                    new CodeInstruction(OpCodes.Call, SymbolExtensions.GetMethodInfo(() => page.UpdateText())),
-                    new CodeInstruction(OpCodes.Br_S, endSwitchJump.labels.First()),
+                    new CodeInstruction(OpCodes.Call, AccessTools.Method(page.GetType(), "UpdateText")),
+                    new CodeInstruction(OpCodes.Br_S, endSwitchJump.labels[0]),
                 ]);
 
-                switchStatementJumps.AddItem(blockStart.labels[0]);
+                switchJumps.Add(blockStart.labels[0]);
             }
 
+            switchStatement.operand = switchJumps.ToArray();
             return codes;
         }
 

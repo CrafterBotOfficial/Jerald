@@ -36,7 +36,7 @@
     <Reference Include="MonoMod.Utils">
       <HintPath>$(GamePath)BepInEx\core\MonoMod.Utils.dll</HintPath>
     </Reference>
-    <Reference Include="Nautilus"  Publicize="true">
+    <Reference Include="Nautilus" Publicize="true">
       <HintPath>$(GamePath)BepInEx\plugins\Modding Helper\Nautilus.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
@@ -60,5 +60,8 @@
     <Reference Include="UnityEngine.UIModule">
       <HintPath>$(GamePath)Gorilla Tag_Data\Managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Testing\" />
   </ItemGroup>
 </Project>
