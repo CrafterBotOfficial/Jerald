@@ -8,16 +8,12 @@ using System.Threading.Tasks;
 
 namespace Jerald.Testing
 {
-    public class ExamplePage : Page
+    public class TestPage : Page
     {
+        public override string GetPageName() => "Test Page";
         public override StringBuilder GetPageContent()
         {
-            return new StringBuilder ("Im crying rn bc MSIL touched my doodle");
-        }
-
-        public override string GetPageName()
-        {
-            return "bruh";
+            return new StringBuilder("Hello world");
         }
     }
 }

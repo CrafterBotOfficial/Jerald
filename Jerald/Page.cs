@@ -12,6 +12,7 @@ namespace Jerald
     
         public void UpdateText()
         {
+            Main.Logger.LogMessage("Updating custom text");
             GorillaComputer.instance.screenText.Text = GetPageContent().ToString().ToUpper();
         }
     }
