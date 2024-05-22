@@ -3,6 +3,7 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace Jerald.Patches
         {
             __instance.currentStateIndex = 0;
             __instance.FunctionsCount += PageManager.Pages.Count;
-            __instance.FunctionNames.AddRange(PageManager.Pages.Select(page => page.PageTitle));
+            __instance.FunctionNames.AddRange(PageManager.Pages.Select(page => page.NormalizedTitle));
             foreach (var text in GameObject.FindObjectsOfType<Text>())
             {
                 if (text.gameObject.name.Contains("FunctionSelect"))
@@ -75,10 +76,9 @@ namespace Jerald.Patches
                 // Inject switch block
                 var blockStart = new CodeInstruction(OpCodes.Ldarg_0);
                 blockStart.labels = [iLGenerator.DefineLabel()];
-
                 codes.InsertRange(GetSwitchAppendPoint(codes), [
                     blockStart,
-                    new CodeInstruction(OpCodes.Call, AccessTools.Method(page.GetType(), "UpdateText")),
+                    new CodeInstruction(OpCodes.Call, SymbolExtensions.GetMethodInfo(() => page.UpdateContent())),
                     new CodeInstruction(OpCodes.Br_S, endSwitchJump.labels[0]),
                 ]);
 

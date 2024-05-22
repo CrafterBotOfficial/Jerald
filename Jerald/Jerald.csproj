@@ -61,7 +61,4 @@
       <HintPath>$(GamePath)Gorilla Tag_Data\Managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Testing\" />
-  </ItemGroup>
 </Project>
