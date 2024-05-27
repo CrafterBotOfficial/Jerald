@@ -3,11 +3,9 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Jerald.Patches
 {
@@ -18,10 +16,9 @@ namespace Jerald.Patches
         [HarmonyPostfix]
         private static void Start_Postfix(GorillaComputer __instance)
         {
-            __instance.currentStateIndex = 0;
             __instance.FunctionsCount += PageManager.Pages.Count;
             __instance.FunctionNames.AddRange(PageManager.Pages.Select(page => page.NormalizedTitle));
-            foreach (var text in GameObject.FindObjectsOfType<Text>())
+            foreach (var text in GameObject.FindObjectsOfType<UnityEngine.UI.Text>())
             {
                 if (text.gameObject.name.Contains("FunctionSelect"))
                     text.horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
@@ -33,7 +30,7 @@ namespace Jerald.Patches
         [HarmonyPrefix]
         private static bool UpdateFunctionScreen_Prefix(GorillaComputer __instance)
         {
-            const int itemsPerPage = 10;
+            const int itemsPerPage = 11;
             int indicatorIndex = __instance.GetStateIndex(__instance.currentState);
             int currentPage = indicatorIndex / itemsPerPage;
             var maxPages = Math.Ceiling((double)__instance.FunctionsCount / itemsPerPage) - 1;
@@ -85,7 +82,7 @@ namespace Jerald.Patches
                 switchJumps.Add(blockStart.labels[0]);
             }
 
-            switchStatement.operand = switchJumps.ToArray();
+            switchStatement.operand = switchJumps.ToArray(); // may or may not be nessacary
             return codes;
         }
 

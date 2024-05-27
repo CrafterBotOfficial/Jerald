@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace Jerald.Testing
 {
+    [AutoRegister]
     public class ExamplePage : Page
     {
         public override string PageTitle { get => "Example"; }
