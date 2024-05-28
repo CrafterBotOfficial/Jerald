@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using GorillaNetworking;
+using System.Text;
 
 namespace Jerald
 {
@@ -10,11 +11,11 @@ namespace Jerald
         public abstract StringBuilder GetPageContent();
 
         internal string NormalizedTitle => PageTitle.Normalize().Trim().ToUpper();
-        internal int Index;
 
         public void UpdateContent()
         {
-            Main.PageQueue.Enqueue(Index);
+            GorillaComputer.instance.screenText.Text =
+            GetPageContent().ToString().ToUpper();
         }
     }
 }

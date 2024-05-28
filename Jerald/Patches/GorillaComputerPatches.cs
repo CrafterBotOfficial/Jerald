@@ -1,9 +1,7 @@
 ﻿using GorillaNetworking;
 using HarmonyLib;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 using System.Text;
 using UnityEngine;
 
@@ -48,48 +46,17 @@ namespace Jerald.Patches
                 stringBuilder.AppendLine("...");
             __instance.functionSelectText.Text = stringBuilder.ToString();
 
-            // Main.Logger.LogDebug($"Page:{currentPage} | max page:{maxPages} | indicatorIndex:{indicatorIndex}");
             return false;
         }
 
-
-#if DEBUG
-        [HarmonyDebug]
-#endif
         [HarmonyPatch("UpdateScreen")]
-        [HarmonyTranspiler]
-        private static IEnumerable<CodeInstruction> UpdateScreen_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator iLGenerator)
+        [HarmonyPostfix]
+        private static void UpdateScreen_Postfix(GorillaComputer __instance)
         {
-            var codes = instructions.ToList();
-
-            var switchStatement = codes.Find(code => code.opcode == OpCodes.Switch);
-            var switchJumps = (switchStatement.operand as IEnumerable<Label>).ToList() ?? throw new System.Exception("Failed to find switch operator or parse its operand.");
-            var endSwitchJump = codes[codes.FindIndex(code => code.opcode == OpCodes.Call && code.operand == AccessTools.Method(typeof(GorillaComputer), "UpdateGameModeText")) - 1]; // codes.Skip(codes.IndexOf(switchStatement)).First(code => code.opcode == OpCodes.Br_S).operand; // codes.Single(code => code.labels.Contains(switchStatementJumps.Last())); 
-
-            foreach (var page in PageManager.Pages)
-            {
-                Main.Logger.LogDebug("Adding MSIL instruction for " + page.PageTitle);
-
-                // Inject switch block
-                var blockStart = new CodeInstruction(OpCodes.Ldarg_0);
-                blockStart.labels = [iLGenerator.DefineLabel()];
-                codes.InsertRange(GetSwitchAppendPoint(codes), [
-                    blockStart,
-                    new CodeInstruction(OpCodes.Call, SymbolExtensions.GetMethodInfo(() => page.UpdateContent())),
-                    new CodeInstruction(OpCodes.Br_S, endSwitchJump.labels[0]),
-                ]);
-
-                switchJumps.Add(blockStart.labels[0]);
-            }
-
-            switchStatement.operand = switchJumps.ToArray(); // may or may not be nessacary
-            return codes;
-        }
-
-        private static int GetSwitchAppendPoint(List<CodeInstruction> instructions)
-        {
-            // TODO impliment
-            return 60;
+            int relativeIndex = __instance.currentStateIndex - (PageManager.DefaultPageCount - 1);
+            if (relativeIndex < 0 || relativeIndex >= PageManager.Pages.Count)
+                return;
+            PageManager.Pages[relativeIndex].UpdateContent();
         }
     }
 }

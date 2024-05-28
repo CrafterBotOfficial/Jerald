@@ -10,10 +10,9 @@ namespace Jerald
     public static class PageManager
     {
         public static List<Page> Pages = [];
-        private static int defaultPageCount;
+        public static int DefaultPageCount;
 
         public static bool Initialized;
-
 
         public static void RegisterPages()
         {
@@ -30,21 +29,10 @@ namespace Jerald
                         {
                             Main.Logger.LogDebug("Found page");
                             var page = Activator.CreateInstance(pages[i]) as Page ?? throw new Exception("Failed to cast page type.");
-
-                            page.Index = Pages.Count;
-                            Main.Logger.LogMessage($"{page.Index} - {Pages.Count}");
-                            /*// force fix for the index unexpectly changing
-                            unsafe
-                            {
-                                fixed (int* index = &page.Index)
-                                {
-                                    *index = 0;
-                                }
-                            }*/
-
                             Pages.Add(page);
                         }
                     }
+                    Initialized = true;
                 }
                 catch (System.Exception ex)
                 {
@@ -57,14 +45,12 @@ namespace Jerald
         {
             var enumBuilder = new EnumBuilder<GorillaComputer.ComputerState>();
             var instance = GorillaComputer.instance;
-            defaultPageCount = instance.stateStack.Count;
-
+            DefaultPageCount = instance.OrderList.Count;
+            
             foreach (var page in Pages)
             {
                 enumBuilder.TryAddEnum(page.NormalizedTitle, typeof(PageManager).Assembly, out GorillaComputer.ComputerState newEnum);
-
                 instance.OrderList.Add(new GorillaComputer.StateOrderItem(newEnum));
-                instance.stateStack.Append(newEnum);
             }
             instance.SwitchState(GorillaComputer.ComputerState.Startup, false);
         }
