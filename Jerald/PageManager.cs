@@ -14,11 +14,18 @@ namespace Jerald
 
         public static bool Initialized;
 
+        public static Page? GetPage()
+        {
+            int relativePageIndex = GorillaComputer.instance.currentStateIndex - DefaultPageCount;
+            return (relativePageIndex < 0 || relativePageIndex >= Pages.Count) ? null : Pages[relativePageIndex];
+        }
+
         public static void RegisterPages()
         {
             Main.Logger.LogMessage("Registering pages");
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            assemblies.Where(assembly => assembly != null && assembly.GetCustomAttribute<AutoRegisterAttribute>() != null).ForEach(async assembly =>
+            assemblies.Where(assembly => assembly != null && assembly.GetCustomAttribute<AutoRegisterAttribute>() != null)
+                      .ForEach(assembly =>
             {
                 try
                 {
@@ -32,7 +39,6 @@ namespace Jerald
                             Pages.Add(page);
                         }
                     }
-                    Initialized = true;
                 }
                 catch (System.Exception ex)
                 {
@@ -46,12 +52,13 @@ namespace Jerald
             var enumBuilder = new EnumBuilder<GorillaComputer.ComputerState>();
             var instance = GorillaComputer.instance;
             DefaultPageCount = instance.OrderList.Count;
-            
+
             foreach (var page in Pages)
             {
                 enumBuilder.TryAddEnum(page.NormalizedTitle, typeof(PageManager).Assembly, out GorillaComputer.ComputerState newEnum);
                 instance.OrderList.Add(new GorillaComputer.StateOrderItem(newEnum));
             }
+            Initialized = true;
             instance.SwitchState(GorillaComputer.ComputerState.Startup, false);
         }
     }

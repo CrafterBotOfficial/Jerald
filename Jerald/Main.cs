@@ -8,7 +8,7 @@ namespace Jerald
     {
         public static ManualLogSource Logger;
 
-        private void Awake()
+        private void Start()
         {
             Logger = base.Logger;
             PageManager.RegisterPages();

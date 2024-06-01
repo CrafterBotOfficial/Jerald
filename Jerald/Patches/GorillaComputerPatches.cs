@@ -49,14 +49,15 @@ namespace Jerald.Patches
             return false;
         }
 
+
         [HarmonyPatch("UpdateScreen")]
         [HarmonyPostfix]
         private static void UpdateScreen_Postfix(GorillaComputer __instance)
         {
-            int relativeIndex = __instance.currentStateIndex - (PageManager.DefaultPageCount - 1);
-            if (relativeIndex < 0 || relativeIndex >= PageManager.Pages.Count)
-                return;
-            PageManager.Pages[relativeIndex].UpdateContent();
+            if (PageManager.Initialized && PageManager.GetPage() is Page page)
+            {
+                page.UpdateContent();
+            }
         }
     }
 }
