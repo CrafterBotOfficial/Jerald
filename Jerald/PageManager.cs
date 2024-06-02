@@ -2,6 +2,7 @@
 using Nautilus.Handlers;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Reflection;
 
@@ -55,7 +56,11 @@ namespace Jerald
 
             foreach (var page in Pages)
             {
-                enumBuilder.TryAddEnum(page.NormalizedTitle, typeof(PageManager).Assembly, out GorillaComputer.ComputerState newEnum);
+                if (!enumBuilder.TryAddEnum(page.NormalizedTitle, typeof(PageManager).Assembly, out GorillaComputer.ComputerState newEnum))
+                {
+                    Main.Logger.LogError($"Failed to add {page.PageTitle} to ");
+                    continue;
+                }
                 instance.OrderList.Add(new GorillaComputer.StateOrderItem(newEnum));
             }
             Initialized = true;

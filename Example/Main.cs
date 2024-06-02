@@ -1,6 +1,8 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using GorillaNetworking;
+using HarmonyLib;
 using Jerald;
 
 [assembly: AutoRegister]
@@ -20,5 +22,14 @@ namespace Example
             Config = base.Config;
             Logger.LogInfo("Loaded");
         }
+
+#if DUMP_DATA
+        private void Start()
+        {
+            new Harmony(Info.Metadata.GUID).Patch(
+                original: AccessTools.Method(typeof(GorillaKeyboardButton), "OnTriggerEnter"),
+                postfix: new HarmonyMethod(typeof(DumpComputerInfo), "Begin"));
+        }
+#endif
     }
 }

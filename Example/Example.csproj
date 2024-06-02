@@ -9,6 +9,8 @@
     <ManagedAssembliesPath>$(GamePath)/Gorilla Tag_Data\Managed</ManagedAssembliesPath>
     <BepInEx_Path>$(GamePath)/BepInEx/</BepInEx_Path>
     <PluginsPath>$(BepInEx_Path)/plugins/</PluginsPath>
+    
+    <DefineConstants>$(DefineConstants);DUMP_DATA</DefineConstants>
   </PropertyGroup>
 
   <!-- Output -->

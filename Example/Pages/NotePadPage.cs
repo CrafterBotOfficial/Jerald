@@ -1,13 +1,14 @@
-﻿using GorillaNetworking;
+﻿using Example;
+using GorillaNetworking;
 using Jerald;
 using System.Text;
 
 namespace Example.Pages
 {
-    [AutoRegister]
+    [AutoRegister] // Tells Jerald to register this class
     public class NotePadPage : Page
     {
-        public override string PageTitle => "Note Pad";
+        public override string PageTitle => "Note Pad"; // The text that will be displayed in the function select screen
 
         private string text = Configuration.PersistantNote.Value;
 
