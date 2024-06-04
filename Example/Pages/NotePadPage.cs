@@ -1,5 +1,4 @@
-﻿using Example;
-using GorillaNetworking;
+﻿using GorillaNetworking;
 using Jerald;
 using System.Text;
 
@@ -8,7 +7,7 @@ namespace Example.Pages
     [AutoRegister] // Tells Jerald to register this class
     public class NotePadPage : Page
     {
-        public override string PageTitle => "Note Pad"; // The text that will be displayed in the function select screen
+        public override string PageName => "Note Pad"; // The text that will be displayed in the function select screen
 
         private string text = Configuration.PersistantNote.Value;
 
@@ -21,7 +20,7 @@ namespace Example.Pages
                     case GorillaKeyboardBindings.delete:
                         text = text.Remove(text.Length - 1, 1);
                         break;
-                    case GorillaKeyboardBindings.option2 | GorillaKeyboardBindings.option3 | GorillaKeyboardBindings.down | GorillaKeyboardBindings.up:
+                    case GorillaKeyboardBindings.option2 | GorillaKeyboardBindings.option3:
                         // do nothing
                         break;
                     case GorillaKeyboardBindings.enter:
@@ -31,9 +30,11 @@ namespace Example.Pages
                         break;
                     case GorillaKeyboardBindings.option1:
                         text += " ";
+                        UpdateContent();
                         break;
                     default:
                         text += key.characterString;
+                        UpdateContent();
                         break;
                 }
             };
@@ -41,7 +42,7 @@ namespace Example.Pages
 
         public override StringBuilder GetPageContent()
         {
-            return new StringBuilder("Write anything you want to remember below.\n")
+            return new StringBuilder("Write anything you want to remember below. Press enter to save\n")
                 .AppendLine(text);
         }
     }

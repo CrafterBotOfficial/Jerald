@@ -8,7 +8,7 @@ namespace Example.Pages
     // [AutoRegister]
     public class FovPage : Page
     {
-        public override string PageTitle => "Fov";
+        public override string PageName => throw new System.NotImplementedException();
 
         private Camera camera => GorillaTagger.Instance.thirdPersonCamera.GetComponentInChildren<Camera>();
 

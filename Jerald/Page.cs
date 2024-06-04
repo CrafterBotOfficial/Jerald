@@ -5,12 +5,12 @@ namespace Jerald
 {
     public abstract class Page
     {
-        public abstract string PageTitle { get; }
+        public abstract string PageName { get; }
 
         /// <summary> This will be called whenever a keyboard button is pressed, player event occures, or the UpdateText method is called.</summary>
         public abstract StringBuilder GetPageContent();
 
-        internal string NormalizedTitle => PageTitle.Normalize().Trim().ToUpper();
+        internal string NormalizedPageName => PageName.Normalize().Trim().ToUpper();
 
         public delegate void OnKeyPressedMethod(GorillaKeyboardButton key);
         /// <summary> When the page is active and a key is pressed.</summary>
@@ -33,7 +33,7 @@ namespace Jerald
                 OnKeyPressed(button);
                 return;
             }
-            Main.Logger.LogWarning("Key event no defined for page " + NormalizedTitle);
+            Main.Logger.LogWarning("Key event no defined for page " + PageName);
         }
 
         internal void InvokePageOpenedEvent()
@@ -43,7 +43,7 @@ namespace Jerald
                 OnPageOpened();
                 return;
             }
-            Main.Logger.LogWarning("OnPageOpened event no defined for page " + NormalizedTitle);
+            Main.Logger.LogWarning("OnPageOpened event no defined for page " + PageName);
         }
     }
 }

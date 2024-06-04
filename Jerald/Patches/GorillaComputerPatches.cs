@@ -15,7 +15,7 @@ namespace Jerald.Patches
         private static void Start_Postfix(GorillaComputer __instance)
         {
             __instance.FunctionsCount += PageManager.Pages.Count;
-            __instance.FunctionNames.AddRange(PageManager.Pages.Select(page => page.NormalizedTitle));
+            __instance.FunctionNames.AddRange(PageManager.Pages.Select(page => page.NormalizedPageName));
             foreach (var text in GameObject.FindObjectsOfType<UnityEngine.UI.Text>())
             {
                 if (text.gameObject.name.Contains("FunctionSelect"))
@@ -42,8 +42,7 @@ namespace Jerald.Patches
                 var suffix = __instance.currentState == __instance.GetState(absoluteIndex) ? "<-" : "";
                 stringBuilder.AppendLine(__instance.FunctionNames[absoluteIndex] + suffix);
             }
-            if (maxPages != currentPage)
-                stringBuilder.AppendLine("...");
+            if (maxPages != currentPage) stringBuilder.AppendLine("...");
             __instance.functionSelectText.Text = stringBuilder.ToString();
 
             return false;
@@ -52,7 +51,7 @@ namespace Jerald.Patches
 
         [HarmonyPatch("UpdateScreen")]
         [HarmonyPostfix]
-        private static void UpdateScreen_Postfix(GorillaComputer __instance)
+        private static void UpdateScreen_Postfix()
         {
             if (PageManager.Initialized && PageManager.GetPage() is Page page)
             {

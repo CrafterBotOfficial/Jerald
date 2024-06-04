@@ -56,9 +56,9 @@ namespace Jerald
 
             foreach (var page in Pages)
             {
-                if (!enumBuilder.TryAddEnum(page.NormalizedTitle, typeof(PageManager).Assembly, out GorillaComputer.ComputerState newEnum))
+                if (!enumBuilder.TryAddEnum(page.NormalizedPageName, typeof(PageManager).Assembly, out GorillaComputer.ComputerState newEnum))
                 {
-                    Main.Logger.LogError($"Failed to add {page.PageTitle} to ");
+                    Main.Logger.LogError($"Failed to add {page.PageName} to ");
                     continue;
                 }
                 instance.OrderList.Add(new GorillaComputer.StateOrderItem(newEnum));

@@ -10,7 +10,7 @@
     <BepInEx_Path>$(GamePath)/BepInEx/</BepInEx_Path>
     <PluginsPath>$(BepInEx_Path)/plugins/</PluginsPath>
     
-    <DefineConstants>$(DefineConstants);DUMP_DATA</DefineConstants>
+    <DefineConstants>$(DefineConstants);<!--DUMP_DATA--></DefineConstants>
   </PropertyGroup>
 
   <!-- Output -->

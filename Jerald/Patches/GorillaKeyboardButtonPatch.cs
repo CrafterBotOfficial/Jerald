@@ -13,6 +13,7 @@ namespace Jerald.Patches
             {
                 return;
             }
+            if (__instance.characterString == "down" || __instance.characterString == "up" && __instance.functionKey) return;
             Main.Logger.LogDebug("Keypress detected");
             page.InvokeKeyStrokeEvent(__instance);
         }
