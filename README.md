@@ -2,6 +2,12 @@
 A lightweight robust mod for Gorilla Tag that allows other mods to appened new pages to the default Gorilla Tag computer.
 
 ## For Developers
+For your plugin to be recognized the assembly must have the AutoRegisterAttribute.
+```cs
+[assembly: AutoRegister]
+namespace MyMod;
+```
+A simple page would look like the following.
 ```cs
 [AutoRegister] // Tells Jerald to register this class
 public class NotePadPage : Page
