@@ -58,5 +58,14 @@ namespace Jerald.Patches
                 page.UpdateContent();
             }
         }
+        
+        [HarmonyPatch("PressButton")]
+        [HarmonyPrefix]
+        private static void PressButtonPrefix(GorillaComputer __instance, GorillaKeyboardBindings buttonPressed)
+        {
+            if (buttonPressed == GorillaKeyboardBindings.up || buttonPressed == GorillaKeyboardBindings.down) return;
+            Main.Logger.LogDebug("Keypress detected");
+            PageManager.GetPage()?.InvokeKeyStrokeEvent(buttonPressed);
+        }
     }
 }

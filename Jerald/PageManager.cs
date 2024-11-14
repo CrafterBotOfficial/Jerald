@@ -1,24 +1,33 @@
 ﻿using GorillaNetworking;
-using Nautilus.Handlers;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Reflection;
+using UnityEngine.Events;
 
 namespace Jerald
 {
     public static class PageManager
     {
         public static List<Page> Pages = [];
-        public static int DefaultPageCount;
 
         public static bool Initialized;
+        private static int DefaultPageCount;
 
         public static Page? GetPage()
         {
-            int relativePageIndex = GorillaComputer.instance.currentStateIndex - DefaultPageCount;
-            return (relativePageIndex < 0 || relativePageIndex >= Pages.Count) ? null : Pages[relativePageIndex];
+            Page returnPage = null;
+            try
+            {
+                string name = GorillaComputer.instance.OrderList
+                    .Find(x => x.State == GorillaComputer.instance.currentState).GetName();
+                returnPage = Pages.First(x => x.PageName == name);
+            }
+            catch
+            {
+            }
+            
+            return returnPage;
         }
 
         public static void RegisterPages()
@@ -26,7 +35,7 @@ namespace Jerald
             Main.Logger.LogMessage("Registering pages");
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             assemblies.Where(assembly => assembly != null && assembly.GetCustomAttribute<AutoRegisterAttribute>() != null)
-                      .ForEach(assembly =>
+                .ForEach(assembly =>
             {
                 try
                 {
@@ -36,12 +45,12 @@ namespace Jerald
                         for (int i = 0; i < pages.Length; i++)
                         {
                             Main.Logger.LogDebug("Found page");
-                            var page = Activator.CreateInstance(pages[i]) as Page ?? throw new Exception("Failed to cast page type.");
+                            var page = Activator.CreateInstance(pages[i], null) as Page ?? throw new Exception("Failed to cast page type.");
                             Pages.Add(page);
                         }
                     }
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     Main.Logger.LogWarning($"Failed to check {assembly.Location} {ex}");
                 }
@@ -50,21 +59,18 @@ namespace Jerald
 
         public static void InjectPagesToEnum()
         {
-            var enumBuilder = new EnumBuilder<GorillaComputer.ComputerState>();
             var instance = GorillaComputer.instance;
             DefaultPageCount = instance.OrderList.Count;
 
             foreach (var page in Pages)
             {
-                if (!enumBuilder.TryAddEnum(page.NormalizedPageName, typeof(PageManager).Assembly, out GorillaComputer.ComputerState newEnum))
-                {
-                    Main.Logger.LogError($"Failed to add {page.PageName} to ");
-                    continue;
-                }
-                instance.OrderList.Add(new GorillaComputer.StateOrderItem(newEnum));
+                int newPage =
+                    Enum.GetNames(typeof(GorillaComputer.ComputerState)).ToList()
+                        .IndexOf(Enum.GetNames(typeof(GorillaComputer.ComputerState)).Last()) + Pages.IndexOf(page) + 1;
+                instance.OrderList.Add(new GorillaComputer.StateOrderItem((GorillaComputer.ComputerState)newPage, page.PageName));
+                
             }
             Initialized = true;
-            instance.SwitchState(GorillaComputer.ComputerState.Startup, false);
         }
     }
 }

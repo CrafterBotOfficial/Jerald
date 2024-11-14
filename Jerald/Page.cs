@@ -12,7 +12,7 @@ namespace Jerald
 
         internal string NormalizedPageName => PageName.Normalize().Trim().ToUpper();
 
-        public delegate void OnKeyPressedMethod(GorillaKeyboardButton key);
+        public delegate void OnKeyPressedMethod(GorillaKeyboardBindings key);
         /// <summary> When the page is active and a key is pressed.</summary>
         protected event OnKeyPressedMethod OnKeyPressed;
 
@@ -26,7 +26,7 @@ namespace Jerald
             GetPageContent().ToString().ToUpper();
         }
 
-        internal void InvokeKeyStrokeEvent(GorillaKeyboardButton button)
+        internal void InvokeKeyStrokeEvent(GorillaKeyboardBindings button)
         {
             if (OnKeyPressed != null)
             {
