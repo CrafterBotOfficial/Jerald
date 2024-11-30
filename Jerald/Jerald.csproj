@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     
-    <GamePath>D:\Games\Oculus\Software\another-axiom-gorilla-tag\</GamePath>
+    <GamePath>X:\OculusApps\Software\another-axiom-gorilla-tag\</GamePath>
     <ManagedAssembliesPath>$(GamePath)/Gorilla Tag_Data\Managed</ManagedAssembliesPath>
     <BepInEx_Path>$(GamePath)/BepInEx/</BepInEx_Path>
     <PluginsPath>$(BepInEx_Path)/plugins/</PluginsPath>
@@ -43,7 +43,7 @@
       <HintPath>$(GamePath)\Gorilla Tag_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>D:\Games\Oculus\Software\another-axiom-gorilla-tag\Gorilla Tag_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>$(GamePath)\Gorilla Tag_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextCoreFontEngineModule">
       <HintPath>$(GamePath)Gorilla Tag_Data\Managed\UnityEngine.TextCoreFontEngineModule.dll</HintPath>
