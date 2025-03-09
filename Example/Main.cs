@@ -9,7 +9,7 @@ using Jerald;
 
 namespace Example
 {
-    [BepInPlugin("crafterbot.computer.example", "Computer Example", "1.0.0")]
+    [BepInPlugin("crafterbot.computer.example", "Computer Example", "1.0.1")]
     [BepInDependency("crafterbot.gorillatag.computer")]
     public class Main : BaseUnityPlugin
     {

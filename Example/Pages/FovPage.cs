@@ -1,5 +1,4 @@
 ﻿using Jerald;
-using System.Text;
 using UnityEngine;
 
 namespace Example.Pages
@@ -34,12 +33,9 @@ namespace Example.Pages
             };
         }
 
-        public override StringBuilder GetPageContent()
+        public override string GetContent()
         {
-            var stringBuilder = new StringBuilder()
-                .Append("Adject the desktop views fov by changing the number below. This will not affect your headsets fov, only the specator camera.")
-                .AppendLine($"\n Current fov: {camera.fieldOfView}");
-            return stringBuilder;
+            return $"Adject the desktop views fov by changing the number below. This will not affect your headsets fov, only the specator camera.\nCurrent fov: {camera.fieldOfView}";
         }
     }
 }

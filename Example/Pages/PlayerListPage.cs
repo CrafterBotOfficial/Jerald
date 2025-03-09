@@ -10,18 +10,18 @@ namespace Example.Pages
 
         private int indicatorIndex;
 
-        // Called every second by the base game, or when base.UpdateContent() is called
-        public override StringBuilder GetPageContent()
-        {NetworkSystemPUN
+        // Called every second by the base game, or when base.UpdateContent() is called. So best not to have any taxing code in here.
+        public override string GetContent()
+        {
             var stringBuilder = new StringBuilder();
             if (NetworkSystem.Instance is NetworkSystem networkSystem && networkSystem.InRoom)
                 goto InRoom;
-            return stringBuilder.Append("You are not currently in room.");
+            return stringBuilder.Append("You are not currently in room.").ToString();
 
         InRoom:
             stringBuilder.AppendLine($"Players {networkSystem.RoomPlayerCount}/10");
             networkSystem.AllNetPlayers.ForEach(player => stringBuilder.AppendLine(player.NickName));
-            return stringBuilder;
+            return stringBuilder.ToString();
         }
     }
 }

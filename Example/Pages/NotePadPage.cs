@@ -1,15 +1,15 @@
 ﻿using GorillaNetworking;
 using Jerald;
-using System.Text;
 
 namespace Example.Pages
 {
     [AutoRegister] // Tells Jerald to register this class
     public class NotePadPage : Page
     {
-        public override string PageName => "Note Pad"; // The text that will be displayed in the function select screen
+        public override string PageName => "Notes"; // This will be displayed in the function select screen
 
-        private string text = Configuration.PersistantNote.Value;
+        private string note = Configuration.PersistantNote.Value;
+        private string pageContents;
 
         public NotePadPage()
         {
@@ -18,32 +18,29 @@ namespace Example.Pages
                 switch (key.Binding)
                 {
                     case GorillaKeyboardBindings.delete:
-                        text = text.Remove(text.Length - 1, 1);
+                        note = note.Remove(note.Length - 1, 1);
                         break;
-                    case GorillaKeyboardBindings.option2 | GorillaKeyboardBindings.option3:
+                    case GorillaKeyboardBindings.option2 | GorillaKeyboardBindings.option3 | GorillaKeyboardBindings.down | GorillaKeyboardBindings.up:
                         // do nothing
                         break;
                     case GorillaKeyboardBindings.enter:
-                        Main.Logger.LogMessage("Saving");
-                        Configuration.PersistantNote.Value = text;
+                        Configuration.PersistantNote.Value = note;
                         Main.Config.Save();
                         break;
                     case GorillaKeyboardBindings.option1:
-                        text += " ";
-                        UpdateContent();
+                        note += " ";
                         break;
                     default:
-                        text += key.characterString;
-                        UpdateContent();
+                        note += key.characterString;
                         break;
                 }
+                pageContents = "Write anything you want to remember below.\n" + note;
             };
         }
 
-        public override StringBuilder GetPageContent()
+        public override string GetContent()
         {
-            return new StringBuilder("Write anything you want to remember below. Press enter to save\n")
-                .AppendLine(text);
+            return pageContents;
         }
     }
 }

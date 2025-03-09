@@ -2,7 +2,7 @@
 A lightweight robust mod for Gorilla Tag that allows other mods to appened new pages to the default Gorilla Tag computer.
 
 ## For Developers
-For your plugin to be recognized the assembly must have the AutoRegisterAttribute.
+For your page to be recognized the assembly must have the AutoRegisterAttribute and it must be in the same assembly as the plugin itself.
 ```cs
 [assembly: AutoRegister]
 namespace MyMod;
@@ -12,9 +12,10 @@ A simple page would look like the following.
 [AutoRegister] // Tells Jerald to register this class
 public class NotePadPage : Page
 {
-    public override string PageTitle => "Note Pad"; // The text that will be displayed in the function select screen
+    public override string PageName => "Notes"; // This will be displayed in the function select screen
 
-    private string text = Configuration.PersistantNote.Value;
+    private string note = Configuration.PersistantNote.Value;
+    private string pageContents;
 
     public NotePadPage()
     {
@@ -23,29 +24,29 @@ public class NotePadPage : Page
             switch (key.Binding)
             {
                 case GorillaKeyboardBindings.delete:
-                    text = text.Remove(text.Length - 1, 1);
+                    note = note.Remove(note.Length - 1, 1);
                     break;
                 case GorillaKeyboardBindings.option2 | GorillaKeyboardBindings.option3 | GorillaKeyboardBindings.down | GorillaKeyboardBindings.up:
                     // do nothing
                     break;
                 case GorillaKeyboardBindings.enter:
-                    Configuration.PersistantNote.Value = text;
+                    Configuration.PersistantNote.Value = note;
                     Main.Config.Save();
                     break;
                 case GorillaKeyboardBindings.option1:
-                    text += " ";
+                    note += " ";
                     break;
                 default:
-                    text += key.characterString;
+                    note += key.characterString;
                     break;
             }
+            pageContents = "Write anything you want to remember below.\n" + note;
         };
     }
 
-    public override StringBuilder GetPageContent()
+    public override string GetContent()
     {
-        return new StringBuilder("Write anything you want to remember below.\n")
-            .AppendLine(text);
+        return pageContents;
     }
 }
 ```
@@ -99,3 +100,5 @@ public class NotePadPage : Page
 
 ## Credits
 <sub><sup><sub><sup>[Chin](https://github.com/Chin0303) for the idea</sup></sub></sup></sub>
+
+This product is not affiliated with Another Axiom Inc. or its videogames Gorilla Tag and Orion Drift and is not endorsed or otherwise sponsored by Another Axiom. Portions of the materials contained herein are property of Another Axiom. ©2021 Another Axiom Inc.

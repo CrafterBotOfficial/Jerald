@@ -3,16 +3,21 @@ using BepInEx.Logging;
 
 namespace Jerald
 {
-    [BepInPlugin("crafterbot.gorillatag.computer", "Jerald", "1.0.0")]
+    [BepInPlugin("crafterbot.gorillatag.computer", "Jerald", Main.Version)]
     public class Main : BaseUnityPlugin
     {
-        public static ManualLogSource Logger;
+        public const string Version = "1.0.1";
+        private static Main instance;
 
-        private void Start()
+        private void Awake()
         {
-            Logger = base.Logger;
-            PageManager.RegisterPages();
+            instance = this;
             HarmonyLib.Harmony.CreateAndPatchAll(typeof(Main).Assembly);
+        }
+
+        public static void Log(object message, LogLevel level = LogLevel.Info)
+        {
+            instance?.Logger.Log(level, message);
         }
     }
 }

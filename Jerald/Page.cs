@@ -1,5 +1,4 @@
 ﻿using GorillaNetworking;
-using System.Text;
 
 namespace Jerald
 {
@@ -7,10 +6,12 @@ namespace Jerald
     {
         public abstract string PageName { get; }
 
-        /// <summary> This will be called whenever a keyboard button is pressed, player event occures, or the UpdateText method is called.</summary>
-        public abstract StringBuilder GetPageContent();
+        /// <summary> The higher in the function list your page will be, higher number = early in the list.</summary>
+        public virtual int Priority => 0;
 
         internal string NormalizedPageName => PageName.Normalize().Trim().ToUpper();
+
+        #region Events
 
         public delegate void OnKeyPressedMethod(GorillaKeyboardButton key);
         /// <summary> When the page is active and a key is pressed.</summary>
@@ -20,30 +21,35 @@ namespace Jerald
         /// <summary> When the page is selected.</summary>
         protected event OnPageOpenedDelegate OnPageOpened;
 
-        public void UpdateContent()
+        internal void InvokeKeyStroke(GorillaKeyboardButton button)
         {
-            GorillaComputer.instance.screenText.Text =
-            GetPageContent().ToString().ToUpper();
-        }
-
-        internal void InvokeKeyStrokeEvent(GorillaKeyboardButton button)
-        {
-            if (OnKeyPressed != null)
-            {
-                OnKeyPressed(button);
-                return;
-            }
-            Main.Logger.LogWarning("Key event no defined for page " + PageName);
+            OnKeyPressed?.Invoke(button);
         }
 
         internal void InvokePageOpenedEvent()
         {
-            if (OnPageOpened != null)
-            {
-                OnPageOpened();
-                return;
-            }
-            Main.Logger.LogWarning("OnPageOpened event no defined for page " + PageName);
+            OnPageOpened?.Invoke();
         }
+
+        #endregion
+
+        /// <summary> If blank the page will say loading.</summary>
+        public virtual string GetContent() { return ""; }
+
+        public void UpdateContent()
+        {
+            string content = GetContent();
+            if (content.IsNullOrEmpty()) content = "Loading...";
+            GorillaComputer.instance.screenText.Text = content.ToUpper();
+        }
+
+
+        #region Deprecated
+
+        // <summary> This will be called whenever a keyboard button is pressed, player event occures, or the UpdateText method is called.</summary>
+        // [Obsolete("Use GetContent() instead")]
+        // public abstract StringBuilder GetPageContent();
+
+        #endregion
     }
 }

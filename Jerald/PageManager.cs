@@ -1,8 +1,7 @@
-﻿using GorillaNetworking;
-using Nautilus.Handlers;
+﻿using BepInEx.Logging;
+using GorillaNetworking;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Reflection;
 
@@ -23,8 +22,8 @@ namespace Jerald
 
         public static void RegisterPages()
         {
-            Main.Logger.LogMessage("Registering pages");
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            Main.Log("Registering custom pages");
+            var assemblies = BepInEx.Bootstrap.Chainloader.PluginInfos.Values.Select(pluginInfo => pluginInfo.Instance.GetType().Assembly);
             assemblies.Where(assembly => assembly != null && assembly.GetCustomAttribute<AutoRegisterAttribute>() != null)
                       .ForEach(assembly =>
             {
@@ -35,7 +34,7 @@ namespace Jerald
                     {
                         for (int i = 0; i < pages.Length; i++)
                         {
-                            Main.Logger.LogDebug("Found page");
+                            Main.Log("Found page", LogLevel.Debug);
                             var page = Activator.CreateInstance(pages[i]) as Page ?? throw new Exception("Failed to cast page type.");
                             Pages.Add(page);
                         }
@@ -43,26 +42,26 @@ namespace Jerald
                 }
                 catch (System.Exception ex)
                 {
-                    Main.Logger.LogWarning($"Failed to check {assembly.Location} {ex}");
+                    Main.Log($"Failed to check {assembly.Location} {ex.Message}", LogLevel.Warning);
                 }
             });
         }
 
-        public static void InjectPagesToEnum()
+        public static void AddPagesToComputer()
         {
-            var enumBuilder = new EnumBuilder<GorillaComputer.ComputerState>();
             var instance = GorillaComputer.instance;
+            int enumCount = Enum.GetValues(typeof(GorillaComputer.ComputerState)).Length;
             DefaultPageCount = instance.OrderList.Count;
 
-            foreach (var page in Pages)
+            Pages = Pages.OrderBy(page => page.Priority).ToList();
+            for (int i = 0; i < Pages.Count; i++)
             {
-                if (!enumBuilder.TryAddEnum(page.NormalizedPageName, typeof(PageManager).Assembly, out GorillaComputer.ComputerState newEnum))
-                {
-                    Main.Logger.LogError($"Failed to add {page.PageName} to ");
-                    continue;
-                }
-                instance.OrderList.Add(new GorillaComputer.StateOrderItem(newEnum));
+                var page = Pages[i];
+                Main.Log("Adding page " + page.PageName, LogLevel.Message);
+                var state = (GorillaComputer.ComputerState)enumCount + i;
+                instance.OrderList.Add(new GorillaComputer.StateOrderItem(state));
             }
+            instance._activeOrderList = instance.OrderList;
             Initialized = true;
             instance.SwitchState(GorillaComputer.ComputerState.Startup, false);
         }
